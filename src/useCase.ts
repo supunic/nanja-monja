@@ -1,6 +1,8 @@
 import { Card } from './domain/card/card';
 import { Deck } from './domain/card/deck';
 import { UsedCards } from './domain/card/usedCards';
+import { User } from './domain/user/user';
+import { Users } from './domain/user/users';
 
 const initCard = (imagePath: string) => {
   // 名前、趣味、親は空文字で初期化
@@ -27,4 +29,14 @@ export const initDeck = (imagePaths: string[]) => {
 export const initUsedCards = () => {
   // 空配列で初期化
   return new UsedCards([]);
+};
+
+export const createUser = (id: string, name: string) => {
+  // ポイント0で初期化
+  return new User(id, name, 0);
+};
+
+export const initUsers = () => {
+  // 空配列で初期化
+  return new Users([]);
 };
