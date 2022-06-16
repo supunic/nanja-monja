@@ -9,7 +9,7 @@ const initCard = (imagePath: string) => {
   return new Card(imagePath, ``, ``, ``);
 };
 
-export const initDeck = (imagePaths: string[]) => {
+export const initDeck = (imagePaths: readonly string[]) => {
   // 各画像ごとに4枚ずつカード化して初期化
   const imagePathsX4 = [];
 

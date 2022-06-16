@@ -1,4 +1,4 @@
-export const imagePaths: string[] = [
+export const imagePaths: readonly string[] = [
   `image01.jpg`,
   `image02.jpg`,
   `image03.jpg`,
