@@ -36,7 +36,7 @@ export const createUser = (id: string, name: string) => {
   return new User(id, name, 0);
 };
 
-export const initUsers = () => {
-  // 空配列で初期化
-  return new Users([]);
+export const initUsers = (fetchUsers: Users) => {
+  // fetchしてきたusersで初期化
+  return new Users(fetchUsers.users);
 };

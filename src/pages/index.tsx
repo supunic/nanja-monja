@@ -6,11 +6,20 @@ import { Deck } from '@/domain/card/deck';
 import { UsedCards } from '@/domain/card/usedCards';
 import { Users } from '@/domain/user/users';
 import { pose } from '@/util';
+import { UserRepository } from '@/infrastructure/firebase/repository/user';
+import { MyFirebase } from '@/vender/firebase';
 
-export default function Home() {
+type HomeProps = {
+  fetchUsers: Users;
+};
+
+export default function Home({ fetchUsers }: HomeProps) {
+  const firebase = new MyFirebase();
+  const userRepository = new UserRepository(firebase.db);
+
   const [deck, setDeck] = useState<Deck>(initDeck(imagePaths));
   const [usedCards, setUsedCards] = useState<UsedCards>(initUsedCards());
-  const [users, setUsers] = useState<Users>(initUsers());
+  const [users, setUsers] = useState<Users>(initUsers(fetchUsers));
   const [showName, setShowName] = useState<boolean>(false);
   const [showHobby, setShowHobby] = useState<boolean>(false);
   const [showAuthor, setShowAuthor] = useState<boolean>(false);
@@ -66,14 +75,16 @@ export default function Home() {
     }
   };
 
-  const handleJoinUserButtonClicked = () => {
+  const handleJoinUserButtonClicked = async () => {
     const name = prompt(`ユーザー名を入力してください`) || `名無し`;
 
     const id = users.newId();
     const newUser = createUser(id, name);
-    const newUsers = users.join(newUser);
+    // const newUsers = users.join(newUser);
 
-    setUsers(newUsers);
+    await userRepository.set(newUser);
+
+    // setUsers(newUsers);
   };
 
   const handleExitUserButtonClicked: MouseEventHandler<HTMLButtonElement> = (
@@ -280,3 +291,11 @@ export default function Home() {
     </div>
   );
 }
+
+Home.getInitialProps = async () => {
+  const firebase = new MyFirebase();
+  const userRepository = new UserRepository(firebase.db);
+  const fetchUsers = await userRepository.fetchAll();
+
+  return { userRepository, fetchUsers };
+};
