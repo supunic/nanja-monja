@@ -5,7 +5,7 @@ import { imagePaths } from '@/const';
 import { Deck } from '@/domain/card/deck';
 import { UsedCards } from '@/domain/card/usedCards';
 import { Users } from '@/domain/user/users';
-import { pose } from '@/util';
+import { Card } from '@/domain/card/card';
 
 export default function Home() {
   const [deck, setDeck] = useState<Deck>(initDeck(imagePaths));
@@ -34,36 +34,33 @@ export default function Home() {
     const addedCards = usedCards.add(card);
 
     setUsedCards(addedCards);
+  };
 
-    if (card.name === ``) {
-      // 画像ロードが終わってからprompt表示したいため少し処理を遅延
-      await pose(1);
+  const handleFirstButtonClicked = (card: Card) => {
+    const name = prompt(`名前をつけてください`) || ``;
+    const hobby = prompt(`趣味を決めてください`) || ``;
+    const author = prompt(`親を入れてください`) || ``;
 
-      const name = prompt(`名前をつけてください`) || ``;
-      const hobby = prompt(`趣味を決めてください`) || ``;
-      const author = prompt(`親を入れてください`) || ``;
+    const newDeck = deck.changeSameCardsStatuses(
+      card.imagePath,
+      name,
+      hobby,
+      author,
+    );
 
-      const newDeck = deck.changeSameCardsStatuses(
-        card.imagePath,
-        name,
-        hobby,
-        author,
-      );
+    const newUsedCards = usedCards.changeSameCardsStatuses(
+      card.imagePath,
+      name,
+      hobby,
+      author,
+    );
 
-      const newUsedCards = usedCards.changeSameCardsStatuses(
-        card.imagePath,
-        name,
-        hobby,
-        author,
-      );
+    setDeck(newDeck);
+    setUsedCards(newUsedCards);
 
-      setDeck(newDeck);
-      setUsedCards(newUsedCards);
-
-      setShowName(true);
-      setShowHobby(true);
-      setShowAuthor(true);
-    }
+    setShowName(true);
+    setShowHobby(true);
+    setShowAuthor(true);
   };
 
   const handleJoinUserButtonClicked = () => {
@@ -263,6 +260,15 @@ export default function Home() {
                       objectFit="contain"
                     />
                   </div>
+                  {usedCards.pickLatest()?.name === `` && (
+                    <button
+                      onClick={() =>
+                        handleFirstButtonClicked(usedCards.pickLatest() as Card)
+                      }
+                    >
+                      初
+                    </button>
+                  )}
                 </div>
               )}
             </div>
